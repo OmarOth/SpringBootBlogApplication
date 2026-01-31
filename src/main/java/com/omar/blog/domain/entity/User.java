@@ -1,11 +1,12 @@
 package com.omar.blog.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
@@ -16,36 +17,43 @@ import java.util.UUID;
 @Builder
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+  @Column(nullable = false, unique = true)
+  private String email;
 
-    @Column(nullable = false)
-    private String password;
+  @Column(nullable = false)
+  private String password;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+  @Column(nullable = false)
+  private LocalDateTime createdAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(createdAt, user.createdAt);
-    }
+  @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Post> posts = new ArrayList<>();
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, password, name, createdAt);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return Objects.equals(id, user.id)
+        && Objects.equals(email, user.email)
+        && Objects.equals(password, user.password)
+        && Objects.equals(name, user.name)
+        && Objects.equals(createdAt, user.createdAt);
+  }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, email, password, name, createdAt);
+  }
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = LocalDateTime.now();
+  }
 }
