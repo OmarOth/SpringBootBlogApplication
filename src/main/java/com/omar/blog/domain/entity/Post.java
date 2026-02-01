@@ -3,6 +3,7 @@ package com.omar.blog.domain.entity;
 import com.omar.blog.domain.PostStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class Post {
       name = "post_tags",
       joinColumns = @JoinColumn(name = "post_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  private Set<Tag> tag;
+  private Set<Tag> tags = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {
