@@ -44,5 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     if (!category.get().getPosts().isEmpty()) {
       throw new IllegalStateException("Category has posts associated with it");
     }
+
+    categoryRepository.deleteById(id);
   }
 }
