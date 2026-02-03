@@ -1,7 +1,7 @@
 package com.omar.blog.controllers;
 
 import com.omar.blog.domain.dto.CreateTagsRequest;
-import com.omar.blog.domain.dto.TagResponse;
+import com.omar.blog.domain.dto.TagDto;
 import com.omar.blog.domain.entity.Tag;
 import com.omar.blog.mappers.TagMapper;
 import com.omar.blog.services.TagService;
@@ -28,19 +28,18 @@ public class TagController {
   private final TagMapper tagMapper;
 
   @GetMapping
-  public ResponseEntity<List<TagResponse>> getAllTags() {
+  public ResponseEntity<List<TagDto>> getAllTags() {
     List<Tag> tags = tagService.getAllTags();
-    List<TagResponse> tagResponses =
-        tags.stream().map(tag -> tagMapper.toTagResponse(tag)).toList();
-    return ResponseEntity.ok(tagResponses);
+    List<TagDto> tagRespons = tags.stream().map(tag -> tagMapper.toTagResponse(tag)).toList();
+    return ResponseEntity.ok(tagRespons);
   }
 
   @PostMapping
-  public ResponseEntity<List<TagResponse>> createTags(
+  public ResponseEntity<List<TagDto>> createTags(
       @Valid @RequestBody CreateTagsRequest createTagsRequest) {
     List<Tag> savedTags = tagService.createTags(createTagsRequest.getNames());
-    List<TagResponse> tagResponses = savedTags.stream().map(tagMapper::toTagResponse).toList();
-    return new ResponseEntity<>(tagResponses, HttpStatus.CREATED);
+    List<TagDto> tagRespons = savedTags.stream().map(tagMapper::toTagResponse).toList();
+    return new ResponseEntity<>(tagRespons, HttpStatus.CREATED);
   }
 
   @DeleteMapping(path = "/{id}")

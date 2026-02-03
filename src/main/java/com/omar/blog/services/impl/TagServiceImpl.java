@@ -3,6 +3,7 @@ package com.omar.blog.services.impl;
 import com.omar.blog.domain.entity.Tag;
 import com.omar.blog.repositories.TagRepository;
 import com.omar.blog.services.TagService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +48,30 @@ public class TagServiceImpl implements TagService {
   @Override
   public void deleteTag(UUID id) {
 
-        tagRepository
-            .findById(id)
-            .ifPresent(
-                tag -> {
-                  if (tag.getPosts().size() > 0) {
-                    throw new IllegalStateException("Cannot delete tag with posts.");
-                  }
-                  tagRepository.deleteById(id);
-                });
+    tagRepository
+        .findById(id)
+        .ifPresent(
+            tag -> {
+              if (tag.getPosts().size() > 0) {
+                throw new IllegalStateException("Cannot delete tag with posts.");
+              }
+              tagRepository.deleteById(id);
+            });
+  }
+
+  @Override
+  public Tag getTagById(UUID id) {
+    return tagRepository
+        .findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Tag not found with id " + id));
+  }
+
+  @Override
+  public List<Tag> getTagsByIds(Set<UUID> ids) {
+    List<Tag> tags = tagRepository.findAllById(ids);
+    if (tags.size() != ids.size()) {
+      throw new EntityNotFoundException("Not All Specified tag IDs exist");
+    }
+    return tags;
   }
 }
